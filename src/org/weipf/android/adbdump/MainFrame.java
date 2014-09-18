@@ -1,11 +1,10 @@
 package org.weipf.android.adbdump;
 
+import org.weipf.android.adbdump.views.MainPanel;
+
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-
-import org.weipf.android.adbdump.views.TabDumpPane;
 
 public class MainFrame extends JFrame {
 
@@ -13,7 +12,7 @@ public class MainFrame extends JFrame {
 		
 		this.setLayout(new BorderLayout());
 		
-		add(new TabDumpPane(Contants.DEFAULT_TAB_PLACEMENT, JTabbedPane.WRAP_TAB_LAYOUT));
+		add(new MainPanel());
 		
 		this.setTitle("Adb dump");
 		this.setBounds(50, 50, Contants.DEFAULT_FRAME_WIDTH, Contants.DEFAULT_FRAME_HEIGHT);

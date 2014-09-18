@@ -1,11 +1,11 @@
 package org.weipf.android.adbdump.views;
 
+import org.weipf.android.adbdump.model.AdbDump;
+import org.weipf.android.adbdump.model.AdbDump.DumpType;
+import org.weipf.android.adbdump.model.DumpReader;
+import org.weipf.android.adbdump.model.TreeNodeInfo;
+
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
@@ -13,14 +13,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
@@ -30,21 +26,15 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
-import org.weipf.android.adbdump.model.AdbDump;
-import org.weipf.android.adbdump.model.TreeNodeInfo;
-import org.weipf.android.adbdump.model.AdbDump.DumpType;
-import org.weipf.android.adbdump.model.DumpReader;
 
 public class ActivitiesDumpPanel extends DumpPanel implements ActionListener{
 	
-	private static final String PATTERN_TREE_ROOT = "Main stack:";
+	private static final String PATTERN_TREE_ROOT = "(Main stack:|Activity stack:)";
 	
 	private static final String PATTERN_TASK_NODE = "\\W*\\* TaskRecord\\{[\\w\\W]*\\}";
 	
-	private static final String PATTERN_ACTIVITY_NODE = "\\W*\\* Hist #\\d{1,2}: ActivityRecord\\{[\\w\\W]*\\}";
+	private static final String PATTERN_ACTIVITY_NODE = "\\W*\\* Hist #\\d{1,2}: (ActivityRecord|HistoryRecord)\\{[\\w\\W]*\\}";
 	
 	JToolBar mButtonBar = null;
 	
@@ -77,7 +67,7 @@ public class ActivitiesDumpPanel extends DumpPanel implements ActionListener{
 					if (tmp.trim().isEmpty()) {
 						continue;
 					}
-					if (tmp.contains(PATTERN_TREE_ROOT)) {
+					if (tmp.trim().matches(PATTERN_TREE_ROOT)) {
 						// get root
 						root = new DefaultMutableTreeNode(new TreeNodeInfo(tmp.trim()));
 					} else if (tmp.matches(PATTERN_TASK_NODE)) {
@@ -108,9 +98,13 @@ public class ActivitiesDumpPanel extends DumpPanel implements ActionListener{
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} catch (NullPointerException e) {
+			    e.printStackTrace();
+            }
             if (root == null) {
-            	mTreeRoot = new DefaultMutableTreeNode("safdjlkdsajf;ldsajf");
+                System.out.println("error occurred!");
+            	mTreeRoot = new DefaultMutableTreeNode("error occurred! Your device may not be supported");
+            	mNodeDetailList.setVisible(false);
             }
 		}
 
@@ -210,6 +204,9 @@ public class ActivitiesDumpPanel extends DumpPanel implements ActionListener{
 				return;
 			}
 			mNodeDetailList.setListData(descriptionList.toArray());
+			if (!mNodeDetailList.isVisible()) {
+			    mNodeDetailList.setVisible(true);
+			}
 		}
 	}
 	

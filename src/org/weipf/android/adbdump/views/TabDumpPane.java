@@ -7,7 +7,7 @@ public class TabDumpPane extends JTabbedPane{
 
 	public TabDumpPane(int tabPlacement, int tabLayoutPolicy) {
 		super(tabPlacement, tabLayoutPolicy);
-
+		
 		addTab("Activities", new ActivitiesDumpPanel());
 		
 		addTab("Services", new JLabel("Comming soon..."));
